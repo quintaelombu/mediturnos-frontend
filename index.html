@@ -1,268 +1,140 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>MediTurnos - Turnos online</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f7fb;
-      color: #111827;
-      display: flex;
-      min-height: 100vh;
-      align-items: center;
-      justify-content: center;
-    }
-    .wrap {
-      width: 100%;
-      max-width: 480px;
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 24px 20px 20px;
-      box-shadow: 0 18px 60px rgba(15, 23, 42, 0.16);
-    }
-    h1 {
-      margin: 0 0 4px;
-      font-size: 1.5rem;
-    }
-    .sub {
-      margin-bottom: 16px;
-      font-size: 0.95rem;
-      color: #6b7280;
-    }
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 18px;
-    }
-    .badge {
-      font-size: 0.75rem;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: #eef2ff;
-      color: #3730a3;
-      font-weight: 600;
-    }
-    label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #4b5563;
-      margin-bottom: 4px;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px 11px;
-      border-radius: 10px;
-      border: 1px solid #d1d5db;
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
-      background: #f9fafb;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: #4f46e5;
-      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
-      background: #ffffff;
-    }
-    textarea {
-      resize: vertical;
-      min-height: 70px;
-      max-height: 160px;
-    }
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .row > div {
-      flex: 1 1 140px;
-    }
-    .btn {
-      width: 100%;
-      margin-top: 16px;
-      padding: 12px 14px;
-      border-radius: 999px;
-      border: none;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(135deg, #4f46e5, #6366f1);
-      color: white;
-      box-shadow: 0 12px 30px rgba(79, 70, 229, 0.35);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .btn[disabled] {
-      opacity: 0.6;
-      cursor: wait;
-      box-shadow: none;
-    }
-    .msg {
-      margin-top: 10px;
-      font-size: 0.85rem;
-      padding: 8px 10px;
-      border-radius: 8px;
-      display: none;
-    }
-    .msg.ok {
-      display: block;
-      background: #ecfdf3;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-    }
-    .msg.err {
-      display: block;
-      background: #fef2f2;
-      color: #b91c1c;
-      border: 1px solid #fecaca;
-    }
-    .foot {
-      margin-top: 14px;
-      font-size: 0.75rem;
-      color: #9ca3af;
-      text-align: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>MediTurnos — Solicitar turno</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 480px;
+            margin: 40px auto;
+            padding: 24px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h2 {
+            margin-top: 0;
+            text-align: center;
+            color: #222;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 12px;
+            display: block;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #004999;
+        }
+        .msg {
+            margin-top: 18px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+
 </head>
 <body>
-  <div class="wrap">
-    <h1>MediTurnos</h1>
-    <div class="sub">Reservá tu turno por videollamada y pagá online.</div>
 
-    <div class="badge-row">
-      <div class="badge">Teleconsulta</div>
-      <div class="badge">Pago con Mercado Pago</div>
-      <div class="badge">Atención por especialidad</div>
-    </div>
+<div class="container">
+    <h2>MediTurnos - Solicitar turno</h2>
 
-    <form id="form-turno">
-      <div>
-        <label for="nombre">Nombre y apellido</label>
-        <input id="nombre" type="text" required placeholder="Nombre del paciente" />
-      </div>
+    <label>Nombre y apellido</label>
+    <input id="nombre" type="text" placeholder="Tu nombre">
 
-      <div style="margin-top: 10px;">
-        <label for="email">Email</label>
-        <input id="email" type="email" required placeholder="correo@ejemplo.com" />
-      </div>
+    <label>Email</label>
+    <input id="email" type="email" placeholder="tu@email.com">
 
-      <div style="margin-top: 10px;">
-        <label for="especialidad">Especialidad</label>
-        <select id="especialidad" required>
-          <option value="">Elegir...</option>
-          <option value="Pediatría">Pediatría</option>
-          <option value="Infectología pediátrica">Infectología pediátrica</option>
-          <option value="Dermatología">Dermatología</option>
-        </select>
-      </div>
+    <label>Médico / Especialidad</label>
+    <select id="especialidad">
+        <option value="Pediatría">Pediatría</option>
+        <option value="Infectología pediátrica">Infectología pediátrica</option>
+        <option value="Dermatología">Dermatología</option>
+    </select>
 
-      <div class="row" style="margin-top: 10px;">
-        <div>
-          <label for="fecha">Fecha</label>
-          <input id="fecha" type="date" required />
-        </div>
-        <div>
-          <label for="hora">Hora</label>
-          <input id="hora" type="time" required />
-        </div>
-      </div>
+    <label>Fecha</label>
+    <input id="fecha" type="date">
 
-      <div style="margin-top: 10px;">
-        <label for="motivo">Motivo de consulta</label>
-        <textarea id="motivo" placeholder="Síntomas, edad, antecedentes..."></textarea>
-      </div>
+    <label>Hora</label>
+    <input id="hora" type="time">
 
-      <button class="btn" type="submit" id="btn-enviar">
-        Pagar y reservar turno
-      </button>
+    <label>Motivo de consulta</label>
+    <textarea id="motivo" rows="3" placeholder="Describe brevemente el motivo"></textarea>
 
-      <div id="mensaje" class="msg"></div>
-    </form>
+    <button onclick="crearTurno()">Solicitar y pagar</button>
 
-    <div class="foot">
-      Recibirás la confirmación y el enlace de videollamada por email.
-    </div>
-  </div>
+    <div id="mensaje" class="msg"></div>
+</div>
 
-  <script>
-    // ⬇⬇⬇ IMPORTANTE: poné acá la URL de tu backend en producción
+<script>
     const API_URL = "https://mediturnos-backend-production.up.railway.app";
 
-    const form = document.getElementById("form-turno");
-    const btn = document.getElementById("btn-enviar");
-    const msgBox = document.getElementById("mensaje");
+    async function crearTurno() {
+        const nombre = document.getElementById("nombre").value;
+        const email = document.getElementById("email").value;
+        const especialidad = document.getElementById("especialidad").value;
+        const fecha = document.getElementById("fecha").value;
+        const hora = document.getElementById("hora").value;
+        const motivo = document.getElementById("motivo").value;
+        const msg = document.getElementById("mensaje");
 
-    function setMsg(texto, tipo) {
-      msgBox.textContent = texto;
-      msgBox.className = "msg " + (tipo === "error" ? "err" : "ok");
-    }
+        msg.innerHTML = "Procesando...";
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      msgBox.className = "msg";
-      msgBox.style.display = "none";
-
-      const nombre = document.getElementById("nombre").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const especialidad = document.getElementById("especialidad").value;
-      const fecha = document.getElementById("fecha").value;
-      const hora = document.getElementById("hora").value;
-      const motivo = document.getElementById("motivo").value.trim();
-
-      if (!nombre || !email || !especialidad || !fecha || !hora) {
-        setMsg("Completá todos los campos obligatorios.", "error");
-        msgBox.style.display = "block";
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = "Procesando...";
-
-      try {
-        const res = await fetch(API_URL + "/api/crear-preferencia", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        const body = {
             nombre,
             email,
             especialidad,
             fecha,
             hora,
-            motivo,
-          }),
-        });
+            motivo
+        };
 
-        const data = await res.json();
+        try {
+            const res = await fetch(API_URL + "/api/crear-preferencia", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
 
-        if (!res.ok) {
-          const detalle = data && data.detail ? data.detail : "No se pudo crear el turno.";
-          throw new Error(detalle);
+            const data = await res.json();
+
+            if (data.init_point) {
+                window.location.href = data.init_point;
+            } else {
+                msg.innerHTML = "Error: no se pudo iniciar el pago.";
+            }
+        } catch (err) {
+            msg.innerHTML = "Error de conexión con el servidor.";
         }
+    }
+</script>
 
-        if (data.init_point) {
-          // Redirigir a Mercado Pago
-          window.location.href = data.init_point;
-        } else {
-          setMsg("No se recibió el enlace de pago.", "error");
-          msgBox.style.display = "block";
-        }
-      } catch (err) {
-        setMsg(err.message || "Error inesperado al crear el turno.", "error");
-        msgBox.style.display = "block";
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Pagar y reservar turno";
-      }
-    });
-  </script>
 </body>
 </html>
