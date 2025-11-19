@@ -2,77 +2,59 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>MediTurnos — Solicitar turno</title>
+    <title>MediTurnos – Solicitar Turno</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-            padding: 0;
+            background: #f7f7f7;
+            padding: 20px;
         }
-        .container {
-            max-width: 480px;
-            margin: 40px auto;
-            padding: 24px;
+        .card {
+            max-width: 500px;
+            margin: 0 auto;
             background: white;
-            border-radius: 14px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        h2 {
-            margin-top: 0;
-            text-align: center;
-            color: #222;
-        }
-        label {
-            font-weight: bold;
-            margin-top: 12px;
-            display: block;
-            color: #333;
-        }
+        h2 { margin-top: 0; }
+        label { font-weight: bold; margin-top: 10px; display: block; }
         input, select, textarea {
             width: 100%;
             padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
             border-radius: 8px;
-            font-size: 15px;
+            border: 1px solid #ccc;
+            margin-top: 4px;
         }
         button {
-            margin-top: 20px;
-            width: 100%;
-            padding: 14px;
-            background: #0066cc;
+            background: #007bff;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 17px;
+            padding: 14px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
             cursor: pointer;
+            margin-top: 20px;
         }
-        button:hover {
-            background: #004999;
-        }
-        .msg {
-            margin-top: 18px;
-            text-align: center;
-            font-weight: bold;
-        }
+        button:hover { background: #0056b3; }
+        .msg { margin-top: 20px; padding: 10px; border-radius: 8px; }
     </style>
-
 </head>
 <body>
 
-<div class="container">
-    <h2>MediTurnos - Solicitar turno</h2>
+<div class="card">
+    <h2>Solicitar Turno</h2>
 
     <label>Nombre y apellido</label>
-    <input id="nombre" type="text" placeholder="Tu nombre">
+    <input id="nombre" placeholder="Ej: Juan Pérez">
 
     <label>Email</label>
-    <input id="email" type="email" placeholder="tu@email.com">
+    <input id="email" type="email" placeholder="Ej: paciente@gmail.com">
 
-    <label>Médico / Especialidad</label>
+    <label>Especialidad</label>
     <select id="especialidad">
         <option value="Pediatría">Pediatría</option>
         <option value="Infectología pediátrica">Infectología pediátrica</option>
@@ -86,54 +68,53 @@
     <input id="hora" type="time">
 
     <label>Motivo de consulta</label>
-    <textarea id="motivo" rows="3" placeholder="Describe brevemente el motivo"></textarea>
+    <textarea id="motivo" rows="3"></textarea>
 
-    <button onclick="crearTurno()">Solicitar y pagar</button>
+    <button onclick="crearPreferencia()">Solicitar Turno</button>
 
-    <div id="mensaje" class="msg"></div>
+    <div id="msg" class="msg"></div>
 </div>
 
 <script>
-    const API_URL = "https://mediturnos-backend-production.up.railway.app";
+const API_URL = "https://mediturnos-backend-production.up.railway.app";
 
-    async function crearTurno() {
-        const nombre = document.getElementById("nombre").value;
-        const email = document.getElementById("email").value;
-        const especialidad = document.getElementById("especialidad").value;
-        const fecha = document.getElementById("fecha").value;
-        const hora = document.getElementById("hora").value;
-        const motivo = document.getElementById("motivo").value;
-        const msg = document.getElementById("mensaje");
+async function crearPreferencia() {
+    const msg = document.getElementById("msg");
+    msg.innerHTML = "Procesando...";
+    msg.style.background = "#fff3cd";
 
-        msg.innerHTML = "Procesando...";
+    const payload = {
+        nombre: document.getElementById("nombre").value,
+        email: document.getElementById("email").value,
+        especialidad: document.getElementById("especialidad").value,
+        fecha: document.getElementById("fecha").value,
+        hora: document.getElementById("hora").value,
+        motivo: document.getElementById("motivo").value
+    };
 
-        const body = {
-            nombre,
-            email,
-            especialidad,
-            fecha,
-            hora,
-            motivo
-        };
+    try {
+        const res = await fetch(API_URL + "/api/crear-preferencia", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
 
-        try {
-            const res = await fetch(API_URL + "/api/crear-preferencia", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body)
-            });
+        const data = await res.json();
 
-            const data = await res.json();
-
-            if (data.init_point) {
-                window.location.href = data.init_point;
-            } else {
-                msg.innerHTML = "Error: no se pudo iniciar el pago.";
-            }
-        } catch (err) {
-            msg.innerHTML = "Error de conexión con el servidor.";
+        if (!res.ok) {
+            msg.innerHTML = "Error: " + data.detail;
+            msg.style.background = "#f8d7da";
+            return;
         }
+
+        // Redirigir a Mercado Pago
+        window.location.href = data.init_point;
+
+    } catch (error) {
+        msg.innerHTML = "Error de conexión";
+        msg.style.background = "#f8d7da";
     }
+}
 </script>
 
 </body>
