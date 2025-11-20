@@ -1,121 +1,492 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>MediTurnos – Solicitar Turno</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>MediTurnos · Solicitar turno online</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020817;
+      --card: #020617;
+      --primary: #0ea5e9;
+      --primary-soft: rgba(14,165,233,0.18);
+      --border: rgba(148,163,184,0.35);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --radius: 16px;
+    }
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f7f7f7;
-            padding: 20px;
-        }
-        .card {
-            max-width: 500px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        h2 { margin-top: 0; }
-        label { font-weight: bold; margin-top: 10px; display: block; }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            margin-top: 4px;
-        }
-        button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        button:hover { background: #0056b3; }
-        .msg { margin-top: 20px; padding: 10px; border-radius: 8px; }
-    </style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 55%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 32px 16px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1080px;
+      background: radial-gradient(circle at top left, #020617, #020617)
+        padding-box;
+      border-radius: 24px;
+      border: 1px solid rgba(148,163,184,0.35);
+      box-shadow:
+        0 40px 120px rgba(15,23,42,0.9),
+        0 0 0 1px rgba(15,23,42,0.9) inset;
+      padding: 28px 28px 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
+      gap: 28px;
+    }
+
+    @media (max-width: 860px) {
+      .shell {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 20px 16px 16px;
+      }
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.5);
+      background: radial-gradient(circle at top, rgba(56,189,248,0.2), transparent);
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 6px rgba(34,197,94,0.25);
+    }
+
+    p.lead {
+      margin: 0 0 18px;
+      font-size: 0.94rem;
+      color: var(--muted);
+      max-width: 32rem;
+    }
+
+    .form-card {
+      background: radial-gradient(circle at top left, #020617, #020617)
+        padding-box;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      padding: 18px 18px 16px;
+      backdrop-filter: blur(24px);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.8rem;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--muted);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.85);
+      color: var(--text);
+      padding: 9px 12px;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease,
+        background 0.15s ease;
+    }
+
+    textarea {
+      border-radius: 14px;
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(148,163,184,0.8);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.3);
+      background: rgba(15,23,42,0.98);
+    }
+
+    .hint {
+      font-size: 0.72rem;
+      color: rgba(148,163,184,0.9);
+    }
+
+    .row-bottom {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    .price-chip {
+      font-size: 0.78rem;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), #020617);
+      color: var(--muted);
+    }
+
+    .price-chip strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    button.primary {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      color: #0b1120;
+      box-shadow:
+        0 14px 40px rgba(8,47,73,0.8),
+        0 0 0 1px rgba(15,23,42,0.9) inset;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 210px;
+      justify-content: center;
+    }
+
+    button.primary:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+
+    .sub-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .ghost-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.45);
+      padding: 6px 11px;
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), #020617);
+      color: var(--muted);
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .badge {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.66rem;
+      border: 1px solid rgba(34,197,94,0.5);
+      color: #bbf7d0;
+      background: rgba(21,128,61,0.18);
+    }
+
+    .right-panel {
+      padding: 10px 4px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .right-card {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 14px 14px 12px;
+      background: radial-gradient(circle at top, #020617, #020617);
+    }
+
+    .right-card h3 {
+      margin: 0 0 8px;
+      font-size: 0.98rem;
+    }
+
+    .step {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .step span.num {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .step b {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .doctor-card {
+      margin-top: 4px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px dashed rgba(148,163,184,0.55);
+      background: radial-gradient(circle at left top, rgba(15,23,42,0.9), #020617);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .doctor-card strong {
+      color: var(--text);
+    }
+
+    .badge-small {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.6);
+      color: #e0f2fe;
+      background: rgba(8,47,73,0.7);
+    }
+
+    .footer {
+      margin-top: 16px;
+      font-size: 0.7rem;
+      color: rgba(148,163,184,0.85);
+      text-align: center;
+      grid-column: 1 / -1;
+    }
+
+    #barra-mensaje {
+      margin-top: 12px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      display: none;
+    }
+
+    #barra-mensaje.error {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(248,113,113,0.7);
+      color: #fecaca;
+    }
+
+    #barra-mensaje.ok {
+      background: rgba(34,197,94,0.18);
+      border: 1px solid rgba(74,222,128,0.7);
+      color: #bbf7d0;
+    }
+  </style>
 </head>
 <body>
+  <main class="shell">
+    <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+    <section>
+      <div class="pill">
+        <span class="pill-dot"></span>
+        Solicitud de turno online · Videoconsulta segura
+      </div>
 
-<div class="card">
-    <h2>Solicitar Turno</h2>
+      <h1>Agenda tu consulta por videollamada</h1>
+      <p class="lead">
+        Elegí el médico o la especialidad, completá tus datos y reservá tu turno.
+        Te vamos a redirigir a Mercado Pago para abonar de forma segura.
+      </p>
 
-    <label>Nombre y apellido</label>
-    <input id="nombre" placeholder="Ej: Juan Pérez">
+      <div class="form-card">
+        <form id="form-turno" class="form-grid">
+          <div class="field">
+            <label for="nombre">Nombre y apellido del paciente</label>
+            <input id="nombre" type="text" placeholder="Ej: Mateo José" required />
+          </div>
 
-    <label>Email</label>
-    <input id="email" type="email" placeholder="Ej: paciente@gmail.com">
+          <div class="field">
+            <label for="email">Correo electrónico</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="tucorreo@ejemplo.com"
+              required
+            />
+          </div>
 
-    <label>Especialidad</label>
-    <select id="especialidad">
-        <option value="Pediatría">Pediatría</option>
-        <option value="Infectología pediátrica">Infectología pediátrica</option>
-        <option value="Dermatología">Dermatología</option>
-    </select>
+          <div class="field">
+            <label for="especialidad">Especialidad</label>
+            <select id="especialidad" required>
+              <option value="">Elegí una opción…</option>
+              <!-- Se rellenará dinámicamente con los médicos disponibles -->
+            </select>
+            <div class="hint">
+              Podés filtrar por especialidad o elegir directamente al médico.
+            </div>
+          </div>
 
-    <label>Fecha</label>
-    <input id="fecha" type="date">
+          <div class="field">
+            <label for="medico">Médico</label>
+            <select id="medico" required>
+              <option value="">Elegí un médico…</option>
+            </select>
+            <div class="hint" id="hint-duracion">
+              La duración y el valor se ajustan automáticamente según el médico.
+            </div>
+          </div>
 
-    <label>Hora</label>
-    <input id="hora" type="time">
+          <div class="field">
+            <label for="fecha">Fecha</label>
+            <input id="fecha" type="date" required />
+          </div>
 
-    <label>Motivo de consulta</label>
-    <textarea id="motivo" rows="3"></textarea>
+          <div class="field">
+            <label for="hora">Hora</label>
+            <input id="hora" type="time" required />
+          </div>
 
-    <button onclick="crearPreferencia()">Solicitar Turno</button>
+          <div class="field full">
+            <label for="motivo">Motivo de consulta</label>
+            <textarea
+              id="motivo"
+              placeholder="Contanos el motivo de consulta en pocas líneas…"
+              required
+            ></textarea>
+          </div>
+        </form>
 
-    <div id="msg" class="msg"></div>
-</div>
+        <div class="row-bottom">
+          <div class="price-chip" id="info-precio">
+            Consulta online: <strong>$—</strong> ·
+            <span id="info-duracion">— min</span>
+          </div>
 
-<script>
-const API_URL = "https://mediturnos-backend-production.up.railway.app";
+          <button id="btn-enviar" class="primary" type="button">
+            SolicitAR turno y pagar
+          </button>
+        </div>
 
-async function crearPreferencia() {
-    const msg = document.getElementById("msg");
-    msg.innerHTML = "Procesando...";
-    msg.style.background = "#fff3cd";
+        <div class="sub-actions">
+          <a href="panel.html" class="ghost-btn">
+            Panel para médicos
+            <span class="badge">Próximamente</span>
+          </a>
+        </div>
 
-    const payload = {
-        nombre: document.getElementById("nombre").value,
-        email: document.getElementById("email").value,
-        especialidad: document.getElementById("especialidad").value,
-        fecha: document.getElementById("fecha").value,
-        hora: document.getElementById("hora").value,
-        motivo: document.getElementById("motivo").value
-    };
+        <div id="barra-mensaje"></div>
+      </div>
+    </section>
 
-    try {
-        const res = await fetch(API_URL + "/api/crear-preferencia", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
+    <!-- COLUMNA DERECHA: INFO -->
+    <aside class="right-panel">
+      <div class="right-card">
+        <h3>¿Cómo funciona MediTurnos?</h3>
+        <div class="step">
+          <span class="num">1</span>
+          <div>
+            <b>Reservás y pagás online.</b><br />
+            Completás tus datos, elegís fecha y hora, y abonás la consulta por
+            Mercado Pago.
+          </div>
+        </div>
+        <div class="step">
+          <span class="num">2</span>
+          <div>
+            <b>Confirmación automática.</b><br />
+            El sistema registra tu turno y notifica al médico con todos los
+            datos.
+          </div>
+        </div>
+        <div class="step">
+          <span class="num">3</span>
+          <div>
+            <b>Videollamada segura.</b><br />
+            En el horario pactado, ambas partes se conectan por videollamada
+            utilizando el enlace enviado.
+          </div>
+        </div>
+      </div>
 
-        const data = await res.json();
+      <div class="right-card">
+        <h3>Médicos que podés elegir</h3>
+        <div class="doctor-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <strong id="doctor-ejemplo-nombre">Seleccioná un médico</strong>
+            <span class="badge-small" id="doctor-ejemplo-especialidad">Online</span>
+          </div>
+          <div>
+            Valor de la consulta:
+            <strong id="doctor-ejemplo-precio">$ —</strong>
+            · Duración aproximada:
+            <strong id="doctor-ejemplo-duracion">— min</strong>
+          </div>
+          <div style="margin-top:4px;">
+            La agenda se ajusta automáticamente si un turno se atrasa, para que
+            el siguiente paciente sepa cuánto tiempo de espera tiene.
+          </div>
+        </div>
+      </div>
+    </aside>
 
-        if (!res.ok) {
-            msg.innerHTML = "Error: " + data.detail;
-            msg.style.background = "#f8d7da";
-            return;
-        }
+    <div class="footer">
+      © 2025 MediTurnos · Plataforma de teleconsultas médicas.
+    </div>
+  </main>
 
-        // Redirigir a Mercado Pago
-        window.location.href = data.init_point;
-
-    } catch (error) {
-        msg.innerHTML = "Error de conexión";
-        msg.style.background = "#f8d7da";
-    }
-}
-</script>
-
+  <!-- Script principal -->
+  <script src="app.js"></script>
 </body>
 </html>
