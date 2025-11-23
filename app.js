@@ -1,143 +1,200 @@
+// ==============================
 // CONFIGURACIÓN
+// ==============================
+
+// URL del backend en Railway
 const API_BASE = "https://mediturnos-backend-production.up.railway.app";
 
+// Helpers rápidos
 const $ = (id) => document.getElementById(id);
 
-function mostrarMensaje(texto) {
-    $("mensaje").textContent = texto;
-    $("error").textContent = "";
+function mostrarOk(texto) {
+  $("mensajeOk").textContent = texto;
+  $("mensajeError").textContent = "";
 }
 
-function mostrarError(texto) {
-    $("error").textContent = texto;
-    $("mensaje").textContent = "";
+function mostrarError(err) {
+  console.error(err);
+  let msg = "Error inesperado";
+  if (typeof err === "string") msg = err;
+  else if (err && err.message) msg = err.message;
+  $("mensajeError").textContent = msg;
+  $("mensajeOk").textContent = "";
 }
 
-// ─────────────────────────────────────
-// Cargar lista de doctores
-// ─────────────────────────────────────
+// ==============================
+// CARGAR LISTA DE DOCTORES
+// ==============================
 async function cargarDoctores() {
-    try {
-        const res = await fetch(`${API_BASE}/doctores`);
-        if (!res.ok) throw new Error("No se pudo obtener la lista de doctores");
-        const data = await res.json();
-
-        const ul = $("doctores-lista");
-        ul.innerHTML = "";
-
-        if (data.length === 0) {
-            const li = document.createElement("li");
-            li.textContent = "No hay doctores cargados.";
-            ul.appendChild(li);
-            return;
-        }
-
-        data.forEach((doc) => {
-            const li = document.createElement("li");
-            li.textContent = `ID ${doc.id} — ${doc.nombre} (${doc.especialidad})`;
-            ul.appendChild(li);
-        });
-    } catch (err) {
-        console.error(err);
-        mostrarError("Error cargando doctores");
+  try {
+    const resp = await fetch(`${API_BASE}/doctores`);
+    if (!resp.ok) {
+      const txt = await resp.text();
+      throw new Error(`Error al cargar doctores (${resp.status}): ${txt}`);
     }
+    const data = await resp.json();
+
+    const tbody = $("tablaDoctores");
+    tbody.innerHTML = "";
+
+    if (!Array.isArray(data) || data.length === 0) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 5;
+      td.textContent = "No hay doctores cargados.";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+
+    for (const doc of data) {
+      const tr = document.createElement("tr");
+
+      const tdId = document.createElement("td");
+      tdId.textContent = doc.id ?? "";
+      tr.appendChild(tdId);
+
+      const tdNombre = document.createElement("td");
+      tdNombre.textContent = doc.nombre ?? "";
+      tr.appendChild(tdNombre);
+
+      const tdEsp = document.createElement("td");
+      tdEsp.textContent = doc.especialidad ?? "";
+      tr.appendChild(tdEsp);
+
+      const tdPrecio = document.createElement("td");
+      tdPrecio.textContent = doc.precio ?? "";
+      tr.appendChild(tdPrecio);
+
+      const tdDur = document.createElement("td");
+      tdDur.textContent = doc.duracion_minutos ?? "";
+      tr.appendChild(tdDur);
+
+      tbody.appendChild(tr);
+    }
+  } catch (e) {
+    mostrarError(e);
+  }
 }
 
-// ─────────────────────────────────────
-// Crear doctor
-// ─────────────────────────────────────
+// ==============================
+// CREAR DOCTOR
+// ==============================
 async function crearDoctor() {
-    const nombre = $("doctor-nombre").value.trim();
-    const especialidad = $("doctor-especialidad").value.trim();
+  const btn = $("btnCrearDoctor");
+  btn.disabled = true;
 
-    if (!nombre || !especialidad) {
-        mostrarError("Nombre y especialidad son obligatorios");
-        return;
+  try {
+    const nombre = $("docNombre").value.trim();
+    const especialidad = $("docEspecialidad").value.trim();
+    const precio = $("docPrecio").value.trim();
+    const duracion = $("docDuracion").value.trim();
+
+    if (!nombre || !especialidad || !precio || !duracion) {
+      throw new Error("Completa todos los campos del doctor.");
     }
 
-    try {
-        const res = await fetch(`${API_BASE}/doctores`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ nombre, especialidad }),
-        });
+    const payload = {
+      nombre,
+      especialidad,
+      precio: Number(precio),
+      duracion_minutos: Number(duracion),
+    };
 
-        if (!res.ok) {
-            const detalle = await res.text();
-            console.error("Error backend:", detalle);
-            throw new Error("Error al crear doctor");
-        }
-
-        const nuevo = await res.json();
-        mostrarMensaje(`Doctor creado: ID ${nuevo.id} — ${nuevo.nombre}`);
-        $("doctor-nombre").value = "";
-        $("doctor-especialidad").value = "";
-        await cargarDoctores();
-    } catch (err) {
-        console.error(err);
-        mostrarError("No se pudo crear el doctor");
-    }
-}
-
-// ─────────────────────────────────────
-// Crear turno
-// ─────────────────────────────────────
-async function crearTurno() {
-    const doctor_id = parseInt($("turno-doctor-id").value, 10);
-    const paciente_nombre = $("turno-paciente-nombre").value.trim();
-    const paciente_email = $("turno-paciente-email").value.trim();
-
-    if (!doctor_id || !paciente_nombre || !paciente_email) {
-        mostrarError("Todos los campos del turno son obligatorios");
-        return;
-    }
-
-    try {
-        const res = await fetch(`${API_BASE}/turnos`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                doctor_id,
-                paciente_nombre,
-                paciente_email,
-            }),
-        });
-
-        if (!res.ok) {
-            const detalle = await res.text();
-            console.error("Error backend:", detalle);
-            throw new Error("Error al crear turno");
-        }
-
-        const turno = await res.json();
-        mostrarMensaje(`Turno creado para ${turno.paciente_nombre} (ID turno ${turno.id})`);
-        $("turno-doctor-id").value = "";
-        $("turno-paciente-nombre").value = "";
-        $("turno-paciente-email").value = "";
-    } catch (err) {
-        console.error(err);
-        mostrarError("No se pudo crear el turno");
-    }
-}
-
-// ─────────────────────────────────────
-// Inicializar eventos cuando carga la página
-// ─────────────────────────────────────
-document.addEventListener("DOMContentLoaded", () => {
-    $("btn-crear-doctor").addEventListener("click", (e) => {
-        e.preventDefault();
-        crearDoctor();
+    const resp = await fetch(`${API_BASE}/doctores`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
 
-    $("btn-crear-turno").addEventListener("click", (e) => {
-        e.preventDefault();
-        crearTurno();
-    });
+    const texto = await resp.text();
+    let data;
 
-    // Cargar lista inicial
+    try {
+      data = JSON.parse(texto);
+    } catch {
+      data = texto;
+    }
+
+    if (!resp.ok) {
+      throw new Error(
+        typeof data === "string"
+          ? data
+          : JSON.stringify(data, null, 2)
+      );
+    }
+
+    mostrarOk(`Doctor creado (ID ${data.id}).`);
+    $("formDoctor").reset();
     cargarDoctores();
+  } catch (e) {
+    mostrarError(e);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ==============================
+// CREAR TURNO
+// ==============================
+async function crearTurno() {
+  const btn = $("btnCrearTurno");
+  btn.disabled = true;
+
+  try {
+    const doctorId = $("turnoDoctorId").value.trim();
+    const nombrePaciente = $("turnoNombrePaciente").value.trim();
+    const emailPaciente = $("turnoEmailPaciente").value.trim();
+
+    if (!doctorId || !nombrePaciente || !emailPaciente) {
+      throw new Error("Completa todos los campos del turno.");
+    }
+
+    const payload = {
+      doctor_id: Number(doctorId),
+      paciente_nombre: nombrePaciente,
+      paciente_email: emailPaciente,
+    };
+
+    const resp = await fetch(`${API_BASE}/turnos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const texto = await resp.text();
+    let data;
+    try {
+      data = JSON.parse(texto);
+    } catch {
+      data = texto;
+    }
+
+    if (!resp.ok) {
+      throw new Error(
+        typeof data === "string"
+          ? data
+          : JSON.stringify(data, null, 2)
+      );
+    }
+
+    mostrarOk(`Turno creado correctamente (ID ${data.id ?? "?"}).`);
+    $("formTurno").reset();
+  } catch (e) {
+    mostrarError(e);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ==============================
+// EVENTOS Y ARRANQUE
+// ==============================
+window.addEventListener("DOMContentLoaded", () => {
+  // Botones
+  $("btnCrearDoctor").addEventListener("click", crearDoctor);
+  $("btnCrearTurno").addEventListener("click", crearTurno);
+
+  // Cargar doctores al inicio
+  cargarDoctores();
 });
