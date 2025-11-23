@@ -1,27 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>MediTurnos</title>
+  <meta charset="UTF-8" />
+  <title>Mediturnos — Frontend</title>
 </head>
-
 <body>
-    <h1>🩺 Mediturnos — Frontend</h1>
+  <h1>Mediturnos — Frontend</h1>
 
-    <h2>Listado de doctores</h2>
-    <ul id="lista-doctores"></ul>
+  <h2>Listado de doctores</h2>
+  <ul id="lista-doctores">
+    <!-- acá se cargan los doctores -->
+  </ul>
 
-    <h2>Crear doctor</h2>
-    <input id="nombre" placeholder="Nombre">
-    <input id="especialidad" placeholder="Especialidad">
-    <button onclick="crearDoctor()">Crear doctor</button>
+  <h2>Crear doctor</h2>
+  <form id="form-doctor">
+    <input id="doctor-nombre" type="text" placeholder="Nombre" required />
+    <input id="doctor-especialidad" type="text" placeholder="Especialidad" required />
+    <button type="submit">Crear doctor</button>
+  </form>
 
-    <h2>Crear turno</h2>
-    <input id="turno-doctor-id" placeholder="ID Doctor">
-    <input id="turno-nombre" placeholder="Nombre paciente">
-    <input id="turno-email" placeholder="Email paciente">
-    <button onclick="crearTurno()">Crear turno</button>
+  <h2>Crear turno</h2>
+  <form id="form-turno">
+    <input id="turno-doctor-id" type="number" placeholder="ID Doctor" required />
+    <input id="turno-paciente-nombre" type="text" placeholder="Nombre paciente" required />
+    <input id="turno-paciente-email" type="email" placeholder="Email paciente" required />
+    <button type="submit">Crear turno</button>
+  </form>
 
-    <script src="app.js"></script>
+  <p id="mensaje" style="margin-top: 1rem; color: green;"></p>
+
+  <!-- Cargamos el JS al final para que los elementos ya existan -->
+  <script src="app.js"></script>
 </body>
 </html>
