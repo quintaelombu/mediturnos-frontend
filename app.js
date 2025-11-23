@@ -1,75 +1,90 @@
-// =======================
-// CONFIGURACIÓN
-// =======================
 const API = "https://mediturnos-backend-production.up.railway.app";
 
-const $ = (id) => document.getElementById(id);
+// ========================================================
+// CARGAR DOCTORES AUTOMÁTICAMENTE
+// ========================================================
+async function cargarDoctores() {
+    try {
+        const res = await fetch(`${API}/doctores`);
+        const data = await res.json();
 
-function msg(texto) {
-    $("mensaje").textContent = texto;
-    $("error").textContent = "";
+        const select = document.getElementById("doctor_id");
+        select.innerHTML = "";
+
+        data.forEach(d => {
+            const opt = document.createElement("option");
+            opt.value = d.id;
+            opt.innerText = `${d.nombre} – ${d.especialidad}`;
+            select.appendChild(opt);
+        });
+    } catch (e) {
+        console.error("Error cargando doctores:", e);
+    }
 }
 
-function err(texto) {
-    $("error").textContent = texto;
-    $("mensaje").textContent = "";
-}
+cargarDoctores();
 
-// =======================
+// ========================================================
 // CREAR DOCTOR
-// =======================
+// ========================================================
 async function crearDoctor() {
-    const nombre = $("docNombre").value;
-    const especialidad = $("docEsp").value;
-
-    if (!nombre || !especialidad) return err("Complete todos los campos.");
+    const payload = {
+        nombre: document.getElementById("doc_nombre").value,
+        email: document.getElementById("doc_email").value,
+        especialidad: document.getElementById("doc_especialidad").value,
+        duracion_min: parseInt(document.getElementById("doc_duracion").value),
+        precio: parseInt(document.getElementById("doc_precio").value)
+    };
 
     try {
-        const res = await fetch(API + "/doctores", {
+        const res = await fetch(`${API}/doctores`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                nombre: nombre,
-                especialidad: especialidad
-            })
+            body: JSON.stringify(payload)
         });
 
         const data = await res.json();
-        if (res.ok) msg("Doctor creado con ID: " + data.id);
-        else err(JSON.stringify(data));
-    }
-    catch {
-        err("Error conectando al backend.");
+
+        document.getElementById("doctor_msg").innerText =
+            `Doctor creado: ID ${data.id}`;
+
+        cargarDoctores();
+
+    } catch (e) {
+        document.getElementById("doctor_msg").innerText = "Error al crear doctor.";
     }
 }
 
-// =======================
+// ========================================================
 // CREAR TURNO
-// =======================
+// ========================================================
 async function crearTurno() {
-    const doctor_id = $("turDocId").value;
-    const paciente_nombre = $("turNombre").value;
-    const paciente_email = $("turEmail").value;
-
-    if (!doctor_id || !paciente_nombre || !paciente_email)
-        return err("Complete todos los campos.");
+    const payload = {
+        paciente_nombre: document.getElementById("paciente_nombre").value,
+        paciente_email: document.getElementById("paciente_email").value,
+        doctor_id: parseInt(document.getElementById("doctor_id").value),
+        fecha: document.getElementById("fecha").value,
+        hora: document.getElementById("hora").value,
+        motivo: document.getElementById("motivo").value
+    };
 
     try {
-        const res = await fetch(API + "/turnos", {
+        const res = await fetch(`${API}/mp/preferencia`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                doctor_id: parseInt(doctor_id),
-                paciente_nombre: paciente_nombre,
-                paciente_email: paciente_email
-            })
+            body: JSON.stringify(payload)
         });
 
         const data = await res.json();
-        if (res.ok) msg("Turno creado con ID: " + data.id);
-        else err(JSON.stringify(data));
-    }
-    catch {
-        err("Error conectando al backend.");
+
+        if (data.response && data.response.init_point) {
+            window.location.href = data.response.init_point;
+        } else {
+            document.getElementById("turno_msg").innerText =
+                "Error creando preferencia de pago.";
+        }
+
+    } catch (e) {
+        document.getElementById("turno_msg").innerText = "Error creando turno.";
     }
 }
