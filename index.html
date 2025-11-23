@@ -1,35 +1,37 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Mediturnos — Frontend</title>
+    <meta charset="UTF-8" />
+    <title>Mediturnos — Frontend</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
-  <h1>Mediturnos — Frontend</h1>
+    <h1>Mediturnos — Frontend</h1>
 
-  <h2>Listado de doctores</h2>
-  <ul id="lista-doctores">
-    <!-- acá se cargan los doctores -->
-  </ul>
+    <h2>Listado de doctores</h2>
+    <ul id="doctores-lista">
+        <!-- acá se cargan los doctores -->
+    </ul>
 
-  <h2>Crear doctor</h2>
-  <form id="form-doctor">
-    <input id="doctor-nombre" type="text" placeholder="Nombre" required />
-    <input id="doctor-especialidad" type="text" placeholder="Especialidad" required />
-    <button type="submit">Crear doctor</button>
-  </form>
+    <h2>Crear doctor</h2>
+    <div>
+        <input id="doctor-nombre" type="text" placeholder="Nombre" />
+        <input id="doctor-especialidad" type="text" placeholder="Especialidad" />
+        <button id="btn-crear-doctor">Crear doctor</button>
+    </div>
 
-  <h2>Crear turno</h2>
-  <form id="form-turno">
-    <input id="turno-doctor-id" type="number" placeholder="ID Doctor" required />
-    <input id="turno-paciente-nombre" type="text" placeholder="Nombre paciente" required />
-    <input id="turno-paciente-email" type="email" placeholder="Email paciente" required />
-    <button type="submit">Crear turno</button>
-  </form>
+    <h2>Crear turno</h2>
+    <div>
+        <input id="turno-doctor-id" type="number" placeholder="ID Doctor" />
+        <input id="turno-paciente-nombre" type="text" placeholder="Nombre paciente" />
+        <input id="turno-paciente-email" type="email" placeholder="Email paciente" />
+        <button id="btn-crear-turno">Crear turno</button>
+    </div>
 
-  <p id="mensaje" style="margin-top: 1rem; color: green;"></p>
+    <p id="mensaje" style="color: green; margin-top: 1rem;"></p>
+    <p id="error" style="color: red;"></p>
 
-  <!-- Cargamos el JS al final para que los elementos ya existan -->
-  <script src="app.js"></script>
+    <!-- Importante: cargar el script AL FINAL del body -->
+    <script src="app.js"></script>
 </body>
 </html>
