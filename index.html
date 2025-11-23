@@ -2,33 +2,52 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mediturnos — Frontend</title>
+    <title>Mediturnos</title>
     <style>
-        body { font-family: Arial; margin: 40px; }
-        input { padding: 6px; margin: 5px; }
-        button { padding: 6px 12px; }
-        #mensaje { color: green; margin-top: 10px; }
-        #error { color: red; margin-top: 10px; }
+        body { font-family: Arial; padding: 20px; background: #f3f3f3; }
+        h2 { color: #333; }
+        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 10px; }
+        input, select, button {
+            padding: 10px; width: 100%; margin-top: 8px; margin-bottom: 10px;
+            border-radius: 6px; border: 1px solid #ccc;
+        }
+        button { background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #resultado { margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<h1>Mediturnos — Frontend</h1>
+    <h1>Mediturnos</h1>
 
-<h2>Crear doctor</h2>
-<input id="docNombre" placeholder="Nombre">
-<input id="docEsp" placeholder="Especialidad">
-<button onclick="crearDoctor()">Crear doctor</button>
+    <!-- Crear doctor -->
+    <div class="card">
+        <h2>Crear Doctor</h2>
+        <input id="doc_nombre" placeholder="Nombre del médico">
+        <input id="doc_email" placeholder="Email del médico">
+        <input id="doc_especialidad" placeholder="Especialidad">
+        <input id="doc_duracion" placeholder="Duración de turno (minutos)">
+        <input id="doc_precio" placeholder="Precio de la consulta">
+        <button onclick="crearDoctor()">Crear Doctor</button>
+        <div id="doctor_msg"></div>
+    </div>
 
-<h2>Crear turno</h2>
-<input id="turDocId" placeholder="ID Doctor">
-<input id="turNombre" placeholder="Nombre Paciente">
-<input id="turEmail" placeholder="Email Paciente">
-<button onclick="crearTurno()">Crear turno</button>
+    <!-- Crear turno -->
+    <div class="card">
+        <h2>Crear Turno</h2>
+        <input id="paciente_nombre" placeholder="Nombre del paciente">
+        <input id="paciente_email" placeholder="Email del paciente">
 
-<p id="mensaje"></p>
-<p id="error"></p>
+        <select id="doctor_id"></select>
 
-<script src="app.js"></script>
+        <input id="fecha" type="date">
+        <input id="hora" type="time">
+        <input id="motivo" placeholder="Motivo de consulta">
+
+        <button onclick="crearTurno()">Crear Turno</button>
+        <div id="turno_msg"></div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
