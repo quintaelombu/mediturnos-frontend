@@ -1,37 +1,186 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <title>Mediturnos — Frontend</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <title>MediTurnos – Frontend</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px 24px 32px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h1 span.icono {
+      font-size: 1.8rem;
+    }
+
+    h2 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      font-size: 1.2rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 4px;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    form input {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      min-width: 120px;
+      flex: 1 1 150px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #e5e7eb;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    #mensajeOk {
+      margin-top: 8px;
+      color: #16a34a;
+      font-size: 0.9rem;
+    }
+
+    #mensajeError {
+      margin-top: 8px;
+      color: #dc2626;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+    }
+
+    .separador {
+      height: 16px;
+    }
+
+    @media (max-width: 600px) {
+      form {
+        flex-direction: column;
+      }
+      form input {
+        width: 100%;
+      }
+      button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Mediturnos — Frontend</h1>
+  <div class="contenedor">
+    <h1><span class="icono">🩺</span> MediTurnos — Frontend</h1>
+    <p class="badge">Versión simple para pruebas (doctores + turnos)</p>
 
+    <!-- Mensajes -->
+    <div id="mensajeOk"></div>
+    <div id="mensajeError"></div>
+
+    <!-- Listado de doctores -->
     <h2>Listado de doctores</h2>
-    <ul id="doctores-lista">
-        <!-- acá se cargan los doctores -->
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Especialidad</th>
+          <th>Precio</th>
+          <th>Duración (min)</th>
+        </tr>
+      </thead>
+      <tbody id="tablaDoctores">
+        <!-- Se llena por JS -->
+      </tbody>
+    </table>
 
+    <div class="separador"></div>
+
+    <!-- Crear doctor -->
     <h2>Crear doctor</h2>
-    <div>
-        <input id="doctor-nombre" type="text" placeholder="Nombre" />
-        <input id="doctor-especialidad" type="text" placeholder="Especialidad" />
-        <button id="btn-crear-doctor">Crear doctor</button>
-    </div>
+    <form id="formDoctor" autocomplete="off">
+      <input id="docNombre" type="text" placeholder="Nombre" required />
+      <input id="docEspecialidad" type="text" placeholder="Especialidad" required />
+      <input id="docPrecio" type="number" min="0" placeholder="Precio consulta" required />
+      <input id="docDuracion" type="number" min="1" placeholder="Duración (min)" required />
+      <button id="btnCrearDoctor" type="button">Crear doctor</button>
+    </form>
 
+    <div class="separador"></div>
+
+    <!-- Crear turno -->
     <h2>Crear turno</h2>
-    <div>
-        <input id="turno-doctor-id" type="number" placeholder="ID Doctor" />
-        <input id="turno-paciente-nombre" type="text" placeholder="Nombre paciente" />
-        <input id="turno-paciente-email" type="email" placeholder="Email paciente" />
-        <button id="btn-crear-turno">Crear turno</button>
-    </div>
+    <form id="formTurno" autocomplete="off">
+      <input id="turnoDoctorId" type="number" min="1" placeholder="ID doctor" required />
+      <input id="turnoNombrePaciente" type="text" placeholder="Nombre paciente" required />
+      <input id="turnoEmailPaciente" type="email" placeholder="Email paciente" required />
+      <button id="btnCrearTurno" type="button">Crear turno</button>
+    </form>
+  </div>
 
-    <p id="mensaje" style="color: green; margin-top: 1rem;"></p>
-    <p id="error" style="color: red;"></p>
-
-    <!-- Importante: cargar el script AL FINAL del body -->
-    <script src="app.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
