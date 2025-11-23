@@ -2,52 +2,71 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mediturnos</title>
+    <title>MediTurnos</title>
     <style>
-        body { font-family: Arial; padding: 20px; background: #f3f3f3; }
-        h2 { color: #333; }
-        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 10px; }
-        input, select, button {
-            padding: 10px; width: 100%; margin-top: 8px; margin-bottom: 10px;
-            border-radius: 6px; border: 1px solid #ccc;
+        body {
+            font-family: Arial;
+            margin: 40px;
         }
-        button { background: #007bff; color: white; border: none; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        #resultado { margin-top: 10px; font-weight: bold; }
+        h2 {
+            margin-top: 40px;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px 0;
+            width: 280px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .box {
+            padding: 15px;
+            border: 1px solid #CCC;
+            width: 350px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Mediturnos</h1>
+<h1>MediTurnos - Panel de Pruebas</h1>
 
-    <!-- Crear doctor -->
-    <div class="card">
-        <h2>Crear Doctor</h2>
-        <input id="doc_nombre" placeholder="Nombre del médico">
-        <input id="doc_email" placeholder="Email del médico">
-        <input id="doc_especialidad" placeholder="Especialidad">
-        <input id="doc_duracion" placeholder="Duración de turno (minutos)">
-        <input id="doc_precio" placeholder="Precio de la consulta">
-        <button onclick="crearDoctor()">Crear Doctor</button>
-        <div id="doctor_msg"></div>
-    </div>
+<div class="box">
+    <h2>Crear Doctor</h2>
+    <input id="doc_nombre" placeholder="Nombre del doctor">
+    <input id="doc_especialidad" placeholder="Especialidad">
+    <input id="doc_precio" type="number" placeholder="Precio consulta (ARS)">
+    <button onclick="crearDoctor()">Crear Doctor</button>
+</div>
 
-    <!-- Crear turno -->
-    <div class="card">
-        <h2>Crear Turno</h2>
-        <input id="paciente_nombre" placeholder="Nombre del paciente">
-        <input id="paciente_email" placeholder="Email del paciente">
+<div class="box">
+    <h2>Listar Doctores</h2>
+    <button onclick="listarDoctores()">Cargar Doctores</button>
+    <ul id="lista_doctores"></ul>
+</div>
 
-        <select id="doctor_id"></select>
+<div class="box">
+    <h2>Crear Turno</h2>
+    <select id="turno_doctor">
+        <option value="">Seleccione un doctor</option>
+    </select><br>
+    <input id="paciente_nombre" placeholder="Nombre paciente">
+    <input id="paciente_email" placeholder="Email paciente">
+    <input id="fecha" type="date">
+    <input id="hora" type="time">
+    <button onclick="crearTurno()">Crear Turno</button>
+</div>
 
-        <input id="fecha" type="date">
-        <input id="hora" type="time">
-        <input id="motivo" placeholder="Motivo de consulta">
+<div class="box">
+    <h2>Crear Preferencia Mercado Pago</h2>
+    <button onclick="crearPreferencia()">Crear Preferencia</button>
+    <p id="mp_result"></p>
+</div>
 
-        <button onclick="crearTurno()">Crear Turno</button>
-        <div id="turno_msg"></div>
-    </div>
+<script src="app.js"></script>
 
-    <script src="app.js"></script>
 </body>
 </html>
