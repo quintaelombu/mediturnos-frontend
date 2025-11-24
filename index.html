@@ -1,72 +1,78 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>MediTurnos</title>
-    <style>
-        body {
-            font-family: Arial;
-            margin: 40px;
-        }
-        h2 {
-            margin-top: 40px;
-        }
-        input, select {
-            padding: 8px;
-            margin: 5px 0;
-            width: 280px;
-        }
-        button {
-            padding: 10px 20px;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-        .box {
-            padding: 15px;
-            border: 1px solid #CCC;
-            width: 350px;
-            border-radius: 5px;
-            margin-bottom: 30px;
-        }
-    </style>
+    <title>Mediturnos</title>
 </head>
 <body>
 
-<h1>MediTurnos - Panel de Pruebas</h1>
+<h2>Crear Doctor</h2>
+<input id="doc_nombre" placeholder="Nombre"><br>
+<input id="doc_esp" placeholder="Especialidad"><br>
+<button onclick="crearDoctor()">Crear Doctor</button>
 
-<div class="box">
-    <h2>Crear Doctor</h2>
-    <input id="doc_nombre" placeholder="Nombre del doctor">
-    <input id="doc_especialidad" placeholder="Especialidad">
-    <input id="doc_precio" type="number" placeholder="Precio consulta (ARS)">
-    <button onclick="crearDoctor()">Crear Doctor</button>
-</div>
+<hr>
 
-<div class="box">
-    <h2>Listar Doctores</h2>
-    <button onclick="listarDoctores()">Cargar Doctores</button>
-    <ul id="lista_doctores"></ul>
-</div>
+<h2>Crear Turno</h2>
+<input id="turno_doctor" placeholder="ID Doctor"><br>
+<input id="turno_paciente" placeholder="Nombre Paciente"><br>
+<input id="turno_fecha" placeholder="Fecha (YYYY-MM-DD)"><br>
+<input id="turno_hora" placeholder="Hora (HH:MM)"><br>
+<button onclick="crearTurno()">Crear Turno</button>
 
-<div class="box">
-    <h2>Crear Turno</h2>
-    <select id="turno_doctor">
-        <option value="">Seleccione un doctor</option>
-    </select><br>
-    <input id="paciente_nombre" placeholder="Nombre paciente">
-    <input id="paciente_email" placeholder="Email paciente">
-    <input id="fecha" type="date">
-    <input id="hora" type="time">
-    <button onclick="crearTurno()">Crear Turno</button>
-</div>
+<hr>
 
-<div class="box">
-    <h2>Crear Preferencia Mercado Pago</h2>
-    <button onclick="crearPreferencia()">Crear Preferencia</button>
-    <p id="mp_result"></p>
-</div>
+<h2>Doctores</h2>
+<button onclick="cargarDoctores()">Ver Doctores</button>
+<pre id="doctores"></pre>
 
-<script src="app.js"></script>
+<h2>Turnos</h2>
+<button onclick="cargarTurnos()">Ver Turnos</button>
+<pre id="turnos"></pre>
+
+<script>
+const API = "https://mediturnos-backend-production.up.railway.app";
+
+function crearDoctor() {
+    fetch(API + "/doctores", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            nombre: document.getElementById("doc_nombre").value,
+            especialidad: document.getElementById("doc_esp").value
+        })
+    }).then(r => r.json()).then(alert);
+}
+
+function crearTurno() {
+    fetch(API + "/turnos", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            doctor_id: document.getElementById("turno_doctor").value,
+            paciente: document.getElementById("turno_paciente").value,
+            fecha: document.getElementById("turno_fecha").value,
+            hora: document.getElementById("turno_hora").value
+        })
+    }).then(r => r.json()).then(alert);
+}
+
+function cargarDoctores() {
+    fetch(API + "/doctores")
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("doctores").textContent = JSON.stringify(data, null, 2);
+        });
+}
+
+function cargarTurnos() {
+    fetch(API + "/turnos")
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("turnos").textContent = JSON.stringify(data, null, 2);
+        });
+}
+</script>
 
 </body>
 </html>
