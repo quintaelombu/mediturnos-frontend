@@ -1,78 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Mediturnos</title>
+    <style>
+        body { font-family: sans-serif; max-width: 700px; margin: auto; padding: 20px; }
+        input { margin: 5px 0; padding: 5px; width: 250px; }
+        button { margin-top: 10px; padding: 6px 12px; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 5px; }
+    </style>
 </head>
 <body>
 
-<h2>Crear Doctor</h2>
-<input id="doc_nombre" placeholder="Nombre"><br>
-<input id="doc_esp" placeholder="Especialidad"><br>
-<button onclick="crearDoctor()">Crear Doctor</button>
+    <h2>Crear Doctor</h2>
+    <input id="doc-nombre" placeholder="Nombre">
+    <input id="doc-esp" placeholder="Especialidad">
+    <button onclick="crearDoctor()">Crear Doctor</button>
 
-<hr>
+    <h2>Crear Turno</h2>
+    <input id="turno-docid" placeholder="ID Doctor">
+    <input id="turno-pac" placeholder="Paciente">
+    <input id="turno-fecha" placeholder="Fecha (YYYY/MM/DD)">
+    <input id="turno-hora" placeholder="Hora (HH:MM)">
+    <button onclick="crearTurno()">Crear Turno</button>
 
-<h2>Crear Turno</h2>
-<input id="turno_doctor" placeholder="ID Doctor"><br>
-<input id="turno_paciente" placeholder="Nombre Paciente"><br>
-<input id="turno_fecha" placeholder="Fecha (YYYY-MM-DD)"><br>
-<input id="turno_hora" placeholder="Hora (HH:MM)"><br>
-<button onclick="crearTurno()">Crear Turno</button>
+    <h2>Doctores</h2>
+    <button onclick="verDoctores()">Ver Doctores</button>
+    <pre id="lista-doctores"></pre>
 
-<hr>
+    <h2>Turnos</h2>
+    <button onclick="verTurnos()">Ver Turnos</button>
+    <pre id="lista-turnos"></pre>
 
-<h2>Doctores</h2>
-<button onclick="cargarDoctores()">Ver Doctores</button>
-<pre id="doctores"></pre>
-
-<h2>Turnos</h2>
-<button onclick="cargarTurnos()">Ver Turnos</button>
-<pre id="turnos"></pre>
-
-<script>
-const API = "https://mediturnos-backend-production.up.railway.app";
-
-function crearDoctor() {
-    fetch(API + "/doctores", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            nombre: document.getElementById("doc_nombre").value,
-            especialidad: document.getElementById("doc_esp").value
-        })
-    }).then(r => r.json()).then(alert);
-}
-
-function crearTurno() {
-    fetch(API + "/turnos", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            doctor_id: document.getElementById("turno_doctor").value,
-            paciente: document.getElementById("turno_paciente").value,
-            fecha: document.getElementById("turno_fecha").value,
-            hora: document.getElementById("turno_hora").value
-        })
-    }).then(r => r.json()).then(alert);
-}
-
-function cargarDoctores() {
-    fetch(API + "/doctores")
-        .then(r => r.json())
-        .then(data => {
-            document.getElementById("doctores").textContent = JSON.stringify(data, null, 2);
-        });
-}
-
-function cargarTurnos() {
-    fetch(API + "/turnos")
-        .then(r => r.json())
-        .then(data => {
-            document.getElementById("turnos").textContent = JSON.stringify(data, null, 2);
-        });
-}
-</script>
-
+    <script src="app.js"></script>
 </body>
 </html>
