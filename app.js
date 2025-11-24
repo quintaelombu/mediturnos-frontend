@@ -1,85 +1,57 @@
+// URL del backend
 const API = "https://mediturnos-backend-production.up.railway.app";
 
-// ------------------------
-// CREAR DOCTOR
-// ------------------------
+// Función para mostrar mensajes claros
+function mensaje(texto) {
+    alert(texto);
+}
+
+// Crear doctor
 async function crearDoctor() {
-    const data = {
-        nombre: document.getElementById("doc_nombre").value,
-        especialidad: document.getElementById("doc_especialidad").value,
-        precio: Number(document.getElementById("doc_precio").value)
-    };
+    const nombre = document.getElementById("doc-nombre").value;
+    const especialidad = document.getElementById("doc-esp").value;
 
     const res = await fetch(`${API}/doctores`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ nombre, especialidad })
     });
 
-    alert("Doctor creado");
-    listarDoctores();
+    const data = await res.json();
+
+    if (res.ok) mensaje(`Doctor creado: ${data.nombre}`);
+    else mensaje("Error al crear doctor");
 }
 
-// ------------------------
-// LISTAR DOCTORES
-// ------------------------
-async function listarDoctores() {
+// Ver doctores
+async function verDoctores() {
     const res = await fetch(`${API}/doctores`);
-    const doctores = await res.json();
-
-    const lista = document.getElementById("lista_doctores");
-    const select = document.getElementById("turno_doctor");
-
-    lista.innerHTML = "";
-    select.innerHTML = `<option value="">Seleccione un doctor</option>`;
-
-    doctores.forEach(d => {
-        lista.innerHTML += `<li>${d.id} - ${d.nombre} (${d.especialidad}) - $${d.precio}</li>`;
-        select.innerHTML += `<option value="${d.id}">${d.nombre} (${d.especialidad})</option>`;
-    });
+    const data = await res.json();
+    document.getElementById("lista-doctores").textContent = JSON.stringify(data, null, 2);
 }
 
-// ------------------------
-// CREAR TURNO
-// ------------------------
+// Crear turno
 async function crearTurno() {
-    const data = {
-        doctor_id: Number(document.getElementById("turno_doctor").value),
-        paciente_nombre: document.getElementById("paciente_nombre").value,
-        paciente_email: document.getElementById("paciente_email").value,
-        fecha: document.getElementById("fecha").value,
-        hora: document.getElementById("hora").value
-    };
+    const doctor_id = parseInt(document.getElementById("turno-docid").value);
+    const paciente = document.getElementById("turno-pac").value;
+    const fecha = document.getElementById("turno-fecha").value;
+    const hora = document.getElementById("turno-hora").value;
 
     const res = await fetch(`${API}/turnos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ doctor_id, paciente, fecha, hora })
     });
 
-    alert("Turno creado");
+    const data = await res.json();
+
+    if (res.ok) mensaje(`Turno creado para ${data.paciente}`);
+    else mensaje("Error al crear turno");
 }
 
-// ------------------------
-// CREAR PREFERENCIA MP
-// ------------------------
-async function crearPreferencia() {
-    const data = {
-        doctor_id: Number(document.getElementById("turno_doctor").value),
-        paciente_nombre: document.getElementById("paciente_nombre").value,
-        paciente_email: document.getElementById("paciente_email").value,
-        fecha: document.getElementById("fecha").value,
-        hora: document.getElementById("hora").value
-    };
-
-    const res = await fetch(`${API}/mp/preferencia`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    });
-
-    const json = await res.json();
-
-    document.getElementById("mp_result").innerHTML =
-        `<a href="${json.response.init_point}" target="_blank">Pagar Ahora</a>`;
+// Ver turnos
+async function verTurnos() {
+    const res = await fetch(`${API}/turnos`);
+    const data = await res.json();
+    document.getElementById("lista-turnos").textContent = JSON.stringify(data, null, 2);
 }
